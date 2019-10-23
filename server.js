@@ -19,21 +19,48 @@ app.get("/", function (req, res) {
 });
 
 
-//Timestamp Microservice
-app.get("/api/timestamp/:date_string?", function (req, res) {
-  if (req.params.date_string == null){
+//Timestamp Empty
+app.get("/api/timestamp", function (req, res) {
     let theDate = new Date();
     res.json({
               'unix': theDate.getTime(),
               'utc': theDate.toUTCString()
             });
-  }else{
-    let theDate = new Date(parseInt(Date.parse(req.params.date_string)));
+});
+
+//Timestamp Given
+app.get("/api/timestamp/:date_string?", function (req, res) {
+  /*if (req.params.date_string == null){
+    let theDate = new Date();
     res.json({
-              'unix': theDate.getTime(),
+              'unix': theDate.valueOf(),
               'utc': theDate.toUTCString()
             });
+  }else{*/
+    let theDate = req.params.date_string;
+    let tdAsInt = parseInt(req.params.date_string);
+    let tdAsDate = new Date(tdAsInt);
+
+  
+  if (!theDate.includes('-')){ //This is a unix timestamp
+    res.json({
+      /*'theDate': theDate,
+      'tdAsDate': tdAsDate,
+      'tdAsInt': tdAsInt,
+      'rec':'unix',*/
+          'unix': tdAsDate.getTime(),
+          'utc': tdAsDate.toUTCString()
+        });
+      
+  }else if (theDate.includes('-')){ //This is a UTC Date
+    res.json({
+              'unix': new Date(theDate).getTime(),
+              'utc': new Date(theDate).toUTCString()
+            });
   }
+  
+    
+  //}
 });
 
 
